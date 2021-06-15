@@ -5,7 +5,14 @@
 #include <stdlib.h>
 
 #define ARITHMETIC_STRING_BUFF_LEN 200
-#define ARITHMETIC_BINARY_BUFF_LEN 16
+#define ARITHMETIC_BINARY_BUFF_LEN 32
+
+void printArr(unsigned char* ptr) {
+	for (int i = 0; i<ARITHMETIC_BINARY_BUFF_LEN; i++) {
+		printf("%02x", ptr[i]);
+	}
+	printf("\n");
+}
 
 /*
  * Helper function for stringToBits()
@@ -50,7 +57,7 @@ void divStringByTwo(char *buf) {
  * Note: stringOutputBuf and binaryOutputBuf must be large enough to hold the largest needed numbers.
  * 		 Their sizes must be defined using ARITHMETIC_STRING_BUFF_LEN and ARITHMETIC_BINARY_BUFF_LEN.
  */
-bool stringToBits(const char *inputBuf, char *stringOutputBuf, unsigned char *binaryOutputBuf) {
+bool stringToBinary(const char *inputBuf, char *stringOutputBuf, unsigned char *binaryOutputBuf) {
 	char stringTempBuf[ARITHMETIC_STRING_BUFF_LEN] = {0};
 	char stringOutputStack[ARITHMETIC_STRING_BUFF_LEN] = {0};
 	int counter = 0;
@@ -238,6 +245,202 @@ bool addBinaries(const unsigned char *operand1, const unsigned char *operand2, u
 		binaryBitMask = 1;
 		--byteInd;
 	}
+	return true;
+}
+
+
+/*
+ * Subtracts one binary number from another
+ *
+ * Input: operand1, operand2
+ * 	- Operand 2 is subtracted from operand 1
+ * 	- Behavior is undefinded if operand 2 is greater than operand 1
+ *
+ * Output: outputBuf
+ *	- Output buffer where the result is written to
+ *
+ * Note: outputBuf must be large enough to hold the largest needed sum. This size must defined by ARITHMETIC_BINARY_BUFF_LEN.
+ */
+bool subtractBinaries(const unsigned char *operand1, const unsigned char *operand2, unsigned char *outputBuf) {
+	int byteInd = ARITHMETIC_BINARY_BUFF_LEN - 1;
+	bool borrow = false;
+	unsigned int binaryBitMask = 1;
+
+	memset(outputBuf, 0, ARITHMETIC_BINARY_BUFF_LEN);
+
+	while (byteInd >= 0) {
+		while (binaryBitMask <= 128) {
+			if ((binaryBitMask & operand1[byteInd]) >= 1 && (binaryBitMask & operand2[byteInd]) >= 1) {
+				if(borrow) {
+					outputBuf[byteInd] |= binaryBitMask;
+				}
+			} else if ((binaryBitMask & operand1[byteInd]) >= 1 && (binaryBitMask & operand2[byteInd]) == 0) {
+				if (borrow) {
+					borrow = false;
+				} else {
+					outputBuf[byteInd] |= binaryBitMask;
+				}
+			} else if ((binaryBitMask & operand1[byteInd]) == 0 && (binaryBitMask & operand2[byteInd]) >= 1) {
+				if (!borrow) {
+					outputBuf[byteInd] |= binaryBitMask;
+				}
+				borrow = true;
+			} else {
+				if (borrow) {
+					outputBuf[byteInd] |= binaryBitMask;
+				}
+			}
+
+			binaryBitMask <<= 1;
+		}
+		binaryBitMask = 1;
+		--byteInd;
+	}
+	return true;
+}
+
+
+/*
+ * Computes operand 1 is less than or equal to operand 2.
+ *
+ * Input: operand1, operand2
+ *
+ * Output: return value
+ *	- +1 if operand1 < operand2
+ * 	- -1 if operand1 > operand2
+ * 	- 0 if operand1 = operand2
+ */
+int lessThanEqual(const unsigned char *operand1, const unsigned char *operand2) {
+	unsigned int bitMask = 128;
+	int byteInd = 0;
+
+	while(byteInd < ARITHMETIC_BINARY_BUFF_LEN) {
+		while (bitMask >= 1) {
+			if ((operand1[byteInd] & bitMask) && !(operand2[byteInd] & bitMask)) {
+				return -1;
+			} else if ((operand2[byteInd] & bitMask) && !(operand1[byteInd] & bitMask)) {
+				return 1;
+			}
+			bitMask >>= 1;
+		}
+
+		bitMask = 128;
+		++byteInd;
+	}
+	return 0;
+}
+
+
+/*
+ * Shifts the binary number right by 1 in place
+ *
+ * Input/Output: operand1
+ */
+bool shiftRight(unsigned char *operand1) {
+	int byteInd = 0;
+	unsigned char newTemp = 0;
+	unsigned char prevTemp = 0;
+
+	while(byteInd < ARITHMETIC_BINARY_BUFF_LEN) {
+		prevTemp = newTemp;
+		newTemp = (operand1[byteInd] & 1);
+		operand1[byteInd] >>= 1;
+		operand1[byteInd] |= (prevTemp<<7);
+
+		++byteInd;
+	}
+	return true;
+}
+
+/*
+ * Computes the number of bits before the first non-zero bit
+ *
+ * Input: operand1
+ *
+ * Output: return value
+ *	- number of bits
+ */
+int bitOffset(const unsigned char *operand1) {
+	int byteInd = 0;
+	unsigned int bitMask = 128;
+
+	int modBitOffset;
+	while(byteInd < ARITHMETIC_BINARY_BUFF_LEN) {
+		if (operand1[byteInd] != 0) {
+			while (bitMask >= 1) {
+				if ((bitMask & operand1[byteInd]) != 0) {
+					return modBitOffset;
+				}
+				bitMask >>= 1;
+				++modBitOffset;
+			}
+			bitMask = 128;
+		}
+		modBitOffset += 8;
+		++byteInd;
+	}
+
+	return ARITHMETIC_BINARY_BUFF_LEN -1;
+}
+
+
+/*
+ * Computes the montgomery multiplication of operand1 and operand2 with modulus mod
+ *
+ * Input: operand1, operand2, mod
+ *
+ * Output: outputBuf
+ *	- Output buffer where the product is written to
+ *
+ * Note: outputBuf must be large enough to hold the largest needed sum. This size must defined by ARITHMETIC_BINARY_BUFF_LEN.
+ */
+bool montgomeryMultiplication(const unsigned char *operand1, const unsigned char *operand2, const unsigned char *mod, unsigned char *outputBuf) {
+
+	unsigned char t[ARITHMETIC_BINARY_BUFF_LEN];
+	unsigned char temp[ARITHMETIC_BINARY_BUFF_LEN];
+	unsigned char n = 0;
+
+	int byteInd = ARITHMETIC_BINARY_BUFF_LEN-1;
+	unsigned int bitMask = 1;
+
+	int bitsToCount = ARITHMETIC_BINARY_BUFF_LEN*8 - bitOffset(mod);
+	int totalBits = 0;
+	bool abort = false;
+
+	while(byteInd >= 0) {
+		while (bitMask <= 128) {
+			if (totalBits == bitsToCount) {
+				abort = true;
+				break;
+			}
+			n = (t[ARITHMETIC_BINARY_BUFF_LEN-1] & 1)^((operand1[byteInd] & bitMask) & (operand2[ARITHMETIC_BINARY_BUFF_LEN-1] & 1));
+			if (operand1[byteInd] & bitMask) {
+				addBinaries(t, operand2, temp);
+				memcpy(t, temp, ARITHMETIC_BINARY_BUFF_LEN);
+			}
+			if (n) {
+				addBinaries(t, mod, temp);
+				memcpy(t, temp, ARITHMETIC_BINARY_BUFF_LEN);
+			}
+			shiftRight(t);
+
+			bitMask <<= 1;
+			++totalBits;
+		}
+
+		if (abort) {
+			break;
+		}
+
+		bitMask = 1;
+		--byteInd;
+	}
+
+	if (lessThanEqual(t, mod) < 0) {
+		subtractBinaries(t, mod, temp);
+		memcpy(t, temp, ARITHMETIC_BINARY_BUFF_LEN);
+	}
+	memcpy(outputBuf, t, ARITHMETIC_BINARY_BUFF_LEN);
 
 	return true;
 }
