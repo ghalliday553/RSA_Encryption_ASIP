@@ -7,7 +7,7 @@
 #define ARITHMETIC_STRING_BUFF_LEN 200
 #define ARITHMETIC_BINARY_BUFF_LEN 32
 
-void printArr(unsigned char* ptr) {
+void printArr(const unsigned char* ptr) {
 	for (int i = 0; i<ARITHMETIC_BINARY_BUFF_LEN; i++) {
 		printf("%02x", ptr[i]);
 	}
@@ -364,11 +364,11 @@ int bitOffset(const unsigned char *operand1) {
 	int byteInd = 0;
 	unsigned int bitMask = 128;
 
-	int modBitOffset;
+	int modBitOffset = 0;
 	while(byteInd < ARITHMETIC_BINARY_BUFF_LEN) {
-		if (operand1[byteInd] != 0) {
+		if (operand1[byteInd] != 0x0) {
 			while (bitMask >= 1) {
-				if ((bitMask & operand1[byteInd]) != 0) {
+				if ((bitMask & operand1[byteInd]) != 0x0) {
 					return modBitOffset;
 				}
 				bitMask >>= 1;
@@ -396,14 +396,17 @@ int bitOffset(const unsigned char *operand1) {
  */
 bool montgomeryMultiplication(const unsigned char *operand1, const unsigned char *operand2, const unsigned char *mod, unsigned char *outputBuf) {
 
-	unsigned char t[ARITHMETIC_BINARY_BUFF_LEN];
-	unsigned char temp[ARITHMETIC_BINARY_BUFF_LEN];
-	unsigned char n = 0;
+	memset(outputBuf, 0, ARITHMETIC_BINARY_BUFF_LEN);
+
+	unsigned char t[ARITHMETIC_BINARY_BUFF_LEN] = {0};
+	unsigned char temp[ARITHMETIC_BINARY_BUFF_LEN] = {0};
+	unsigned int n = 0;
 
 	int byteInd = ARITHMETIC_BINARY_BUFF_LEN-1;
 	unsigned int bitMask = 1;
 
 	int bitsToCount = ARITHMETIC_BINARY_BUFF_LEN*8 - bitOffset(mod);
+
 	int totalBits = 0;
 	bool abort = false;
 
@@ -413,7 +416,7 @@ bool montgomeryMultiplication(const unsigned char *operand1, const unsigned char
 				abort = true;
 				break;
 			}
-			n = (t[ARITHMETIC_BINARY_BUFF_LEN-1] & 1)^((operand1[byteInd] & bitMask) & (operand2[ARITHMETIC_BINARY_BUFF_LEN-1] & 1));
+			n = (t[ARITHMETIC_BINARY_BUFF_LEN-1] & 0x1)^((operand1[byteInd] & bitMask) && (operand2[ARITHMETIC_BINARY_BUFF_LEN-1] & 0x1));
 			if (operand1[byteInd] & bitMask) {
 				addBinaries(t, operand2, temp);
 				memcpy(t, temp, ARITHMETIC_BINARY_BUFF_LEN);
@@ -436,7 +439,7 @@ bool montgomeryMultiplication(const unsigned char *operand1, const unsigned char
 		--byteInd;
 	}
 
-	if (lessThanEqual(t, mod) < 0) {
+	if (lessThanEqual(t, mod) <= 0) {
 		subtractBinaries(t, mod, temp);
 		memcpy(t, temp, ARITHMETIC_BINARY_BUFF_LEN);
 	}

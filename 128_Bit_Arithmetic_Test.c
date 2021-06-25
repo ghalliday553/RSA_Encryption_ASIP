@@ -7,6 +7,12 @@ int main(void) {
 	unsigned char binaryBuf2[ARITHMETIC_BINARY_BUFF_LEN] = {0};
 	unsigned char binaryBuf3[ARITHMETIC_BINARY_BUFF_LEN] = {0};
 	unsigned char binaryBuf4[ARITHMETIC_BINARY_BUFF_LEN] = {0};
+	unsigned char binaryBuf5[ARITHMETIC_BINARY_BUFF_LEN] = {0};
+	unsigned char binaryBuf6[ARITHMETIC_BINARY_BUFF_LEN] = {0};
+	unsigned char binaryBuf7[ARITHMETIC_BINARY_BUFF_LEN] = {0};
+	unsigned char binaryBuf8[ARITHMETIC_BINARY_BUFF_LEN] = {0};
+	unsigned char binaryBuf9[ARITHMETIC_BINARY_BUFF_LEN] = {0};
+	unsigned char binaryBuf10[ARITHMETIC_BINARY_BUFF_LEN] = {0};
 
 	// DECIMAL TO BINARY CONVERSION
 	stringToBinary("12345", stringBuf, binaryBuf1);
@@ -96,6 +102,33 @@ int main(void) {
 
 
 	// MULTIPLICATION
+	stringToBinary("292", stringBuf, binaryBuf1);
+	stringToBinary("386", stringBuf, binaryBuf2);
+	stringToBinary("667", stringBuf, binaryBuf3);
+	montgomeryMultiplication(binaryBuf1, binaryBuf2, binaryBuf3, binaryBuf4);
+	stringToBinary("1", stringBuf, binaryBuf1);
+	montgomeryMultiplication(binaryBuf1, binaryBuf4, binaryBuf3, binaryBuf5);
+	printf("55*59 mod 667 is ");
+	printArr(binaryBuf5);
+
+	stringToBinary("19", stringBuf, binaryBuf1);
+	stringToBinary("19", stringBuf, binaryBuf2);
+	stringToBinary("35", stringBuf, binaryBuf3);
+	montgomeryMultiplication(binaryBuf1, binaryBuf2, binaryBuf3, binaryBuf4);
+	stringToBinary("1", stringBuf, binaryBuf1);
+	montgomeryMultiplication(binaryBuf1, binaryBuf4, binaryBuf3, binaryBuf5);
+	printf("26*26 mod 35 is ");
+	printArr(binaryBuf5);
+
+	stringToBinary("1", stringBuf, binaryBuf1);
+	stringToBinary("8", stringBuf, binaryBuf2);
+	stringToBinary("9", stringBuf, binaryBuf3);
+	montgomeryMultiplication(binaryBuf1, binaryBuf2, binaryBuf3, binaryBuf4);
+	stringToBinary("1", stringBuf, binaryBuf1);
+	montgomeryMultiplication(binaryBuf1, binaryBuf4, binaryBuf3, binaryBuf5);
+	printf("4*5 mod 9 is ");
+	printArr(binaryBuf5);
+
 	stringToBinary("17", stringBuf, binaryBuf1);
 	stringToBinary("22", stringBuf, binaryBuf2);
 	stringToBinary("23", stringBuf, binaryBuf3);
