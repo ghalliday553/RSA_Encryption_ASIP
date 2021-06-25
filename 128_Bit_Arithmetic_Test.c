@@ -102,6 +102,13 @@ int main(void) {
 
 
 	// MULTIPLICATION
+	stringToBinary("5", stringBuf, binaryBuf1);
+	stringToBinary("1024", stringBuf, binaryBuf2);
+	stringToBinary("15", stringBuf, binaryBuf3);
+	montgomeryMultiplication(binaryBuf1, binaryBuf2, binaryBuf3, binaryBuf4);
+	printf("5*16 mod 15 is ");
+	printArr(binaryBuf4);
+
 	stringToBinary("292", stringBuf, binaryBuf1);
 	stringToBinary("386", stringBuf, binaryBuf2);
 	stringToBinary("667", stringBuf, binaryBuf3);
@@ -136,6 +143,40 @@ int main(void) {
 	printf("17*22 mod 23 is ");
 	printArr(binaryBuf4);
 
+	//MMM Helper
+	printf("MMM HELPER ------------\n");
+
+	stringToBinary("55", stringBuf, binaryBuf1);
+	stringToBinary("59", stringBuf, binaryBuf2);
+	stringToBinary("667", stringBuf, binaryBuf3);
+	montgomeryMultiplicationHelper(binaryBuf1, binaryBuf2, binaryBuf3, binaryBuf4);
+	printf("55*59 mod 667 is ");
+	printArr(binaryBuf4);
+
+	stringToBinary("26", stringBuf, binaryBuf1);
+	stringToBinary("26", stringBuf, binaryBuf2);
+	stringToBinary("35", stringBuf, binaryBuf3);
+	montgomeryMultiplicationHelper(binaryBuf1, binaryBuf2, binaryBuf3, binaryBuf4);
+	printf("26*26 mod 35 is ");
+	printArr(binaryBuf4);
+
+	stringToBinary("4", stringBuf, binaryBuf1);
+	stringToBinary("5", stringBuf, binaryBuf2);
+	stringToBinary("9", stringBuf, binaryBuf3);
+	montgomeryMultiplicationHelper(binaryBuf1, binaryBuf2, binaryBuf3, binaryBuf4);
+	printf("4*5 mod 9 is ");
+	printArr(binaryBuf4);
+
+	stringToBinary("127980", stringBuf, binaryBuf1);
+	stringToBinary("6428", stringBuf, binaryBuf2);
+	stringToBinary("235189", stringBuf, binaryBuf3);
+	montgomeryMultiplicationHelper(binaryBuf1, binaryBuf2, binaryBuf3, binaryBuf4);
+	printf("127980*6428 mod 235189 is ");
+	printArr(binaryBuf4);
+
+	printf("MMM HELPER ------------\n");
+
+
 	// SHIFT RIGHT
 	stringToBinary("17", stringBuf, binaryBuf1);
 	shiftRight(binaryBuf1);
@@ -146,5 +187,4 @@ int main(void) {
 	shiftRight(binaryBuf1);
 	printf("shift 523 right is ");
 	printArr(binaryBuf1);
-
 }

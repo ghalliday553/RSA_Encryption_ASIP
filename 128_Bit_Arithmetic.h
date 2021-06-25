@@ -439,11 +439,58 @@ bool montgomeryMultiplication(const unsigned char *operand1, const unsigned char
 		--byteInd;
 	}
 
-	if (lessThanEqual(t, mod) <= 0) {
+	while (lessThanEqual(t, mod) <= 0) {
 		subtractBinaries(t, mod, temp);
 		memcpy(t, temp, ARITHMETIC_BINARY_BUFF_LEN);
 	}
 	memcpy(outputBuf, t, ARITHMETIC_BINARY_BUFF_LEN);
+
+	return true;
+}
+
+
+bool montgomeryMultiplicationHelper(const unsigned char *operand1, const unsigned char *operand2, const unsigned char *mod, unsigned char *outputBuf) {
+	char stringBuf[ARITHMETIC_STRING_BUFF_LEN] = {0};
+	unsigned char r2[ARITHMETIC_BINARY_BUFF_LEN] = {0};
+	unsigned char one[ARITHMETIC_BINARY_BUFF_LEN] = {0};
+	unsigned char resultTemp1[ARITHMETIC_BINARY_BUFF_LEN] = {0};
+	unsigned char resultTemp2[ARITHMETIC_BINARY_BUFF_LEN] = {0};
+	unsigned char resultTemp3[ARITHMETIC_BINARY_BUFF_LEN] = {0};
+
+	int m = ARITHMETIC_BINARY_BUFF_LEN*8 - bitOffset(mod);
+	int m2 = m*2;
+
+	int byte = m2/8;
+	int remainingBits = m2 - byte*8;
+	unsigned int bitMask = 1;
+	for(int i = 0; i < remainingBits; ++i) {
+		bitMask<<=1;
+	}
+	r2[ARITHMETIC_BINARY_BUFF_LEN-1-byte] |= bitMask;
+
+	/*
+	printf("bitmask is %u\n", bitMask);
+	printf("byte is %i\n", byte);
+	printf("remaining bits are %i\n", remainingBits);
+	printf("r2 is: ");
+	printArr(r2);
+	printf("after printarr r2\n");
+	*/
+
+	montgomeryMultiplication(operand1, r2, mod, resultTemp1);
+	//printf("AR1 is: ");
+	//printArr(resultTemp1);
+	
+	montgomeryMultiplication(operand2, r2, mod, resultTemp2);
+	//printf("AR2 is: ");
+	//printArr(resultTemp3);
+
+	montgomeryMultiplication(resultTemp1, resultTemp2, mod, resultTemp3);
+	//printf("INTERMEDIATE is: ");
+	//printArr(resultTemp3);
+
+	stringToBinary("1", stringBuf, one);
+	montgomeryMultiplication(one, resultTemp3, mod, outputBuf);
 
 	return true;
 }
