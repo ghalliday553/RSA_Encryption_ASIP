@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define ARITHMETIC_STRING_BUFF_LEN 200
+#define ARITHMETIC_STRING_BUFF_LEN 32 //200
 #define ARITHMETIC_BINARY_BUFF_LEN 32
 
 void printArr(const unsigned char* ptr) {
@@ -12,6 +12,35 @@ void printArr(const unsigned char* ptr) {
 		printf("%02x", ptr[i]);
 	}
 	printf("\n");
+}
+
+
+//compare to string to see if they match 
+//input is the two char arrays to compare
+int CompareString(const unsigned char* ptr1, const unsigned char* ptr2){
+	int flag = 0;
+	for (int i = 0; i<ARITHMETIC_BINARY_BUFF_LEN; i++) {
+		
+		if(ptr1[i] != ptr2[i]){
+			return 1; //not the same
+		}
+		else {
+			flag = 0; //the same
+		}
+		//printf("%02x", ptr[i]);
+	}//end of for loop
+
+	return flag; //retun 0
+}
+
+//writes binary values to save in a file,
+//takes file and pointer to string
+void WriteToFile(const unsigned char* ptr, FILE *file) {
+
+	for (int i = 0; i<ARITHMETIC_BINARY_BUFF_LEN; i++) {
+
+		fprintf(file,"%02x", ptr[i]);
+	}
 }
 
 /*
@@ -493,6 +522,11 @@ bool montgomeryMultiplicationHelper(const unsigned char *operand1, const unsigne
 	montgomeryMultiplication(one, resultTemp3, mod, outputBuf);
 
 	return true;
+}
+
+
+
+
 }
 
 
