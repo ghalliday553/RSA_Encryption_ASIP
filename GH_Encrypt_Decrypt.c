@@ -66,8 +66,12 @@ void encrypt_decrypt(const unsigned char *num, const unsigned char *exp, const u
 			 * increment the file pointer accordingly.
 			 */
 			size_t offset = binaryToDecimal(square);
-			for (int i = 0; i < ARITHMETIC_BINARY_BUFF_LEN; i++) {
-				fseek(fptr, offset, SEEK_CUR);
+			if(offset < SIZE_MAX/ARITHMETIC_BINARY_BUFF_LEN) {
+				fseek(fptr, offset*ARITHMETIC_BINARY_BUFF_LEN, SEEK_CUR);
+			} else {
+				for (int i = 0; i < ARITHMETIC_BINARY_BUFF_LEN; i++) {
+					fseek(fptr, offset, SEEK_CUR);
+				}
 			}
 
 			/*
