@@ -18,7 +18,7 @@ int main(void) {
 		montgomeryMultiplicationHelper(valueBuf, valueBuf, modBuf, resultBuf);
 
 		// Write the result to file
-		fwrite(resultBuf, sizeof(unsigned char), ARITHMETIC_BINARY_BUFF_LEN, fptr);
+		fwrite(resultBuf+ARITHMETIC_BINARY_STORE_LEN, sizeof(unsigned char), ARITHMETIC_BINARY_STORE_LEN, fptr);
 
 		// Increment index
 		addBinaries(valueBuf, oneBuf, resultBuf);

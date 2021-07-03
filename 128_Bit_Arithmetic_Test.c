@@ -25,7 +25,7 @@ int main(void) {
 	stringToBinary("523", binaryBuf1);
 	printf("523 binary is: ");
 	printArr(binaryBuf1);
-
+	
 	stringToBinary("340282366920938463463374607431768211455", binaryBuf1);
 	printf("340282366920938463463374607431768211455 binary is: ");
 	printArr(binaryBuf1);

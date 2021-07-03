@@ -6,6 +6,7 @@
 
 #define ARITHMETIC_STRING_BUFF_LEN 200
 #define ARITHMETIC_BINARY_BUFF_LEN 32
+#define ARITHMETIC_BINARY_STORE_LEN ARITHMETIC_BINARY_BUFF_LEN/2
 
 void printArr(const unsigned char* ptr) {
 	for (int i = 0; i<ARITHMETIC_BINARY_BUFF_LEN; i++) {
@@ -389,7 +390,7 @@ bool montgomeryMultiplicationHelper(const unsigned char *operand1, const unsigne
  *
  * Input: val
  *
- * Note: Behavior is undefined if val is greater than SIZE_MAX.
+ * Note: Behavior is undefined if val is greater than SIZE_MAX
  */
 size_t binaryToDecimal(const unsigned char *val) {
 	unsigned char temp[ARITHMETIC_BINARY_BUFF_LEN] = {0};

@@ -56,7 +56,7 @@ void encrypt_decrypt(const unsigned char *num, const unsigned char *exp, const u
 			while(lessThanEqual(max, square) >= 0){
 				subtractBinaries(square, max, product);
 				memcpy(square, product, ARITHMETIC_BINARY_BUFF_LEN);
-				for (int i = 0; i < ARITHMETIC_BINARY_BUFF_LEN; i++) {
+				for (int i = 0; i < ARITHMETIC_BINARY_STORE_LEN; i++) {
 					fseek(fptr, SIZE_MAX, SEEK_CUR);
 				}
 			}
@@ -67,9 +67,9 @@ void encrypt_decrypt(const unsigned char *num, const unsigned char *exp, const u
 			 */
 			size_t offset = binaryToDecimal(square);
 			if(offset < SIZE_MAX/ARITHMETIC_BINARY_BUFF_LEN) {
-				fseek(fptr, offset*ARITHMETIC_BINARY_BUFF_LEN, SEEK_CUR);
+				fseek(fptr, offset*ARITHMETIC_BINARY_STORE_LEN, SEEK_CUR);
 			} else {
-				for (int i = 0; i < ARITHMETIC_BINARY_BUFF_LEN; i++) {
+				for (int i = 0; i < ARITHMETIC_BINARY_STORE_LEN; i++) {
 					fseek(fptr, offset, SEEK_CUR);
 				}
 			}
@@ -78,7 +78,7 @@ void encrypt_decrypt(const unsigned char *num, const unsigned char *exp, const u
 			 * The value being stored at index n is the square of index n.
 			 * Update square with the next square.
 			 */
-			fread(square, ARITHMETIC_BINARY_BUFF_LEN, 1, fptr);
+			fread(square+ARITHMETIC_BINARY_STORE_LEN, ARITHMETIC_BINARY_BUFF_LEN, 1, fptr);
 
 			bitMask <<= 1;
 			++bitCounter;
