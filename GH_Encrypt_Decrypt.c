@@ -2,8 +2,23 @@
 #include <stdint.h>
 #include <stdio.h>
 
+char mod[] = "3233";
+char halfMod[] = "1616";
 
-void encrypt_decrypt(const unsigned char *num, const unsigned char *exp, const unsigned char *mod, unsigned char* out) {
+void formatOffset(unsigned char *square, const unsigned char *halfMod) {
+	if (lessThanEqual(square, halfMod) <= 0){
+		unsigned char distanceFromCenterBuf[ARITHMETIC_BINARY_BUFF_LEN] = {0};
+		unsigned char oneBuff[ARITHMETIC_BINARY_BUFF_LEN] = {0};
+		unsigned char tempBuff[ARITHMETIC_BINARY_BUFF_LEN] = {0};
+		stringToBinary("1", oneBuff);
+
+		subtractBinaries(square, halfMod, distanceFromCenterBuf);
+		subtractBinaries(halfMod, distanceFromCenterBuf, tempBuff);
+		addBinaries(tempBuff, oneBuff, square);
+	}
+}
+
+void encrypt_decrypt(const unsigned char *num, const unsigned char *exp, const unsigned char *mod, const unsigned char *halfMod, unsigned char* out) {
 	memset(out, 0, ARITHMETIC_BINARY_BUFF_LEN);
 
 	FILE *fptr = fopen("./top.bin","r");
@@ -47,6 +62,8 @@ void encrypt_decrypt(const unsigned char *num, const unsigned char *exp, const u
 				montgomeryMultiplicationHelper(product, square, mod, out);
 				memcpy(product, out, ARITHMETIC_BINARY_BUFF_LEN);
 			}
+
+			formatOffset(square, halfMod);
 
 			/*
 			 *	If file offset is greater than SIZE_MAX, loop until 
@@ -99,20 +116,22 @@ int main(void) {
 	unsigned char valueBuf[ARITHMETIC_BINARY_BUFF_LEN] = {0};
 	unsigned char expBuf[ARITHMETIC_BINARY_BUFF_LEN] = {0};
 	unsigned char modBuf[ARITHMETIC_BINARY_BUFF_LEN] = {0};
+	unsigned char halfModBuf[ARITHMETIC_BINARY_BUFF_LEN] = {0};
 	unsigned char outputBuf[ARITHMETIC_BINARY_BUFF_LEN] = {0};
 
 	stringToBinary("123", valueBuf);
 	stringToBinary("17", expBuf);
-	stringToBinary("3233", modBuf);
+	stringToBinary(mod, modBuf);
+	stringToBinary(halfMod, halfModBuf);
 
-	encrypt_decrypt(valueBuf, expBuf, modBuf, outputBuf);
+	encrypt_decrypt(valueBuf, expBuf, modBuf, halfModBuf, outputBuf);
 
 	printf("encrypted value is: ");
 	printArr(outputBuf);
 
 	stringToBinary("855", valueBuf);
 	stringToBinary("2753", expBuf);
-	encrypt_decrypt(valueBuf, expBuf, modBuf, outputBuf);
+	encrypt_decrypt(valueBuf, expBuf, modBuf, halfModBuf, outputBuf);
 	printf("decrypted value is: ");
 	printArr(outputBuf);
 }
