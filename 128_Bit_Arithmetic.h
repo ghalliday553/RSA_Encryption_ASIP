@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 #define ARITHMETIC_STRING_BUFF_LEN 200
-#define ARITHMETIC_BINARY_BUFF_LEN 32
+#define ARITHMETIC_BINARY_BUFF_LEN 8
 #define ARITHMETIC_BINARY_STORE_LEN ARITHMETIC_BINARY_BUFF_LEN/2
 
 void printArr(const unsigned char* ptr) {
@@ -366,6 +366,7 @@ bool montgomeryMultiplicationHelper(const unsigned char *operand1, const unsigne
 	unsigned char resultTemp3[ARITHMETIC_BINARY_BUFF_LEN] = {0};
 
 	size_t m = ARITHMETIC_BINARY_BUFF_LEN*8 - bitOffset(mod);
+
 	size_t m2 = m*2;
 
 	size_t byte = m2/8;
@@ -393,19 +394,20 @@ bool montgomeryMultiplicationHelper(const unsigned char *operand1, const unsigne
  * Note: Behavior is undefined if val is greater than SIZE_MAX
  */
 size_t binaryToDecimal(const unsigned char *val) {
+
 	unsigned char temp[ARITHMETIC_BINARY_BUFF_LEN] = {0};
 	memcpy(temp, val, ARITHMETIC_BINARY_BUFF_LEN);
 
-	size_t offset = sizeof(size_t);
 	size_t byteInd = 0;
 	unsigned char c;
-	while((byteInd+offset) < ARITHMETIC_BINARY_BUFF_LEN - offset/2) {
-		c = temp[ARITHMETIC_BINARY_BUFF_LEN - (byteInd+1)];
-		temp[ARITHMETIC_BINARY_BUFF_LEN - (byteInd+1)] = temp[offset + byteInd];
-		temp[offset + byteInd] = c;
+
+	while(byteInd < ARITHMETIC_BINARY_BUFF_LEN) {
+		temp[ARITHMETIC_BINARY_BUFF_LEN - (byteInd+1)] = val[byteInd];
+		temp[byteInd] = val[ARITHMETIC_BINARY_BUFF_LEN - (byteInd+1)];
 		++byteInd;
 	}
-	return *(size_t*)(temp+offset);
+
+	return *(size_t*)(temp+ARITHMETIC_BINARY_BUFF_LEN-(sizeof(size_t)));
 }
 
 

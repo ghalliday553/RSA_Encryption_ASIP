@@ -1,6 +1,6 @@
 #include "128_Bit_Arithmetic.h"
 
-char mod[10] = "3233";
+char mod[ARITHMETIC_STRING_BUFF_LEN] = "16157591";
 
 int main(void) {
 	unsigned char valueBuf[ARITHMETIC_BINARY_BUFF_LEN] = {0};
@@ -16,6 +16,7 @@ int main(void) {
 	stringToBinary(mod, modBuf);
 
 	FILE *fptr = fopen("./top.bin","w+");
+
 	while (lessThanEqual(counterBuf, modBuf) == 1) {
 		// Calculate the square of the index
 		montgomeryMultiplicationHelper(valueBuf, valueBuf, modBuf, resultBuf);
