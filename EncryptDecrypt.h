@@ -10,9 +10,9 @@ void formatOffset(unsigned char *square, const unsigned char *halfMod) {
 		unsigned char tempBuff[ARITHMETIC_BINARY_BUFF_LEN] = {0};
 		stringToBinary("1", oneBuff);
 
-		subtractBinaries(square, halfMod, distanceFromCenterBuf);
-		subtractBinaries(halfMod, distanceFromCenterBuf, tempBuff);
-		addBinaries(tempBuff, oneBuff, square);
+		subtraction(square, halfMod, distanceFromCenterBuf);
+		subtraction(halfMod, distanceFromCenterBuf, tempBuff);
+		addition(tempBuff, oneBuff, square);
 	}
 }
 
@@ -73,7 +73,7 @@ void encrypt_decrypt(const unsigned char *num, const unsigned char *exp, const u
 			 */
 			fseek(fptr, 0, SEEK_SET);
 			while(lessThanEqual(max, square) >= 0){
-				subtractBinaries(square, max, product);
+				subtraction(square, max, product);
 				memcpy(square, product, ARITHMETIC_BINARY_BUFF_LEN);
 				for (int i = 0; i < ARITHMETIC_BINARY_STORE_LEN; i++) {
 					fseek(fptr, SIZE_MAX, SEEK_CUR);

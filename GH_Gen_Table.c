@@ -25,11 +25,11 @@ int main(void) {
 		fwrite(resultBuf+ARITHMETIC_BINARY_STORE_LEN, sizeof(unsigned char), ARITHMETIC_BINARY_STORE_LEN, fptr);
 
 		// Increment index
-		addBinaries(valueBuf, oneBuf, resultBuf);
+		addition(valueBuf, oneBuf, resultBuf);
 		memcpy(valueBuf, resultBuf, ARITHMETIC_BINARY_BUFF_LEN);
 
 		// Increment counter
-		addBinaries(counterBuf, twoBuf, resultBuf);
+		addition(counterBuf, twoBuf, resultBuf);
 		memcpy(counterBuf, resultBuf, ARITHMETIC_BINARY_BUFF_LEN);
 	}
 

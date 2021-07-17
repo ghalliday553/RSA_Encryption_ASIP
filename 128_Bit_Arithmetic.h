@@ -394,7 +394,7 @@ void division(const unsigned char *operand1, const unsigned char *operand2, unsi
 				shiftLeft(temp);
 			}
 
-			subtractBinaries(operand1Temp, temp, resultTemp);
+			subtraction(operand1Temp, temp, resultTemp);
 			memcpy(operand1Temp, resultTemp, ARITHMETIC_BINARY_BUFF_LEN);
 		}
 
@@ -471,7 +471,7 @@ bool montgomeryMultiplication(const unsigned char *operand1, const unsigned char
 		unsigned char multRes[ARITHMETIC_BINARY_BUFF_LEN] = {0};
 		multiplication(mod, divRes, multRes);
 
-		subtractBinaries(t, multRes, outputBuf);
+		subtraction(t, multRes, outputBuf);
 	} else {
 		memcpy(outputBuf, t, ARITHMETIC_BINARY_BUFF_LEN);
 	}
