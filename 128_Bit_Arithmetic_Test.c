@@ -53,19 +53,19 @@ int main(void) {
 	// BINARY ADDITION
 	stringToBinary("2", binaryBuf1);
 	stringToBinary("7", binaryBuf2);
-	addBinaries(binaryBuf1, binaryBuf2, binaryBuf3);
+	addition(binaryBuf1, binaryBuf2, binaryBuf3);
 	printf("Add Binaries - 10 + 111 is ");
 	printArr(binaryBuf3);
 
 	stringToBinary("15", binaryBuf1);
 	stringToBinary("15", binaryBuf2);
-	addBinaries(binaryBuf1, binaryBuf2, binaryBuf3);
+	addition(binaryBuf1, binaryBuf2, binaryBuf3);
 	printf("Add Binaries - 1111 + 1111 is ");
 	printArr(binaryBuf3);
 
 	stringToBinary("15", binaryBuf1);
 	stringToBinary("1", binaryBuf2);
-	addBinaries(binaryBuf1, binaryBuf2, binaryBuf3);
+	addition(binaryBuf1, binaryBuf2, binaryBuf3);
 	printf("Add Binaries - 1111 + 1 is ");
 	printArr(binaryBuf3);
 
@@ -73,13 +73,13 @@ int main(void) {
 	// BINARY SUBTRACTION
 	stringToBinary("25", binaryBuf1);
 	stringToBinary("10", binaryBuf2);
-	subtractBinaries(binaryBuf1, binaryBuf2, binaryBuf3);
+	subtraction(binaryBuf1, binaryBuf2, binaryBuf3);
 	printf("Subtract Binaries - 11001 - 1010 is ");
 	printArr(binaryBuf3);
 
 	stringToBinary("250", binaryBuf1);
 	stringToBinary("15", binaryBuf2);
-	subtractBinaries(binaryBuf1, binaryBuf2, binaryBuf3);
+	subtraction(binaryBuf1, binaryBuf2, binaryBuf3);
 	printf("Subtract Binaries - 250 - 15 is ");
 	printArr(binaryBuf3);
 
@@ -101,8 +101,37 @@ int main(void) {
 	stringToBinary("5", binaryBuf2);
 	printf("5 less than 5 ? %i\n", lessThanEqual(binaryBuf2, binaryBuf1));
 
+	// DIVISION
+	stringToBinary("10", binaryBuf1);
+	stringToBinary("2", binaryBuf2);
 
-	// MULTIPLICATION
+	division(binaryBuf1, binaryBuf2, binaryBuf3);
+	size_t ret = binaryToDecimal(binaryBuf3);
+	printf("10/2 is %zu\n", ret);
+
+	stringToBinary("25", binaryBuf1);
+	stringToBinary("2", binaryBuf2);
+
+	division(binaryBuf1, binaryBuf2, binaryBuf3);
+	ret = binaryToDecimal(binaryBuf3);
+	printf("25/2 is %zu\n", ret);
+
+	// MULTIPLICATION (Non MMM)
+	stringToBinary("10", binaryBuf1);
+	stringToBinary("2", binaryBuf2);
+
+	multiplication(binaryBuf1, binaryBuf2, binaryBuf3);
+	ret = binaryToDecimal(binaryBuf3);
+	printf("10*2 is %zu\n", ret);
+
+	stringToBinary("25", binaryBuf1);
+	stringToBinary("2", binaryBuf2);
+
+	multiplication(binaryBuf1, binaryBuf2, binaryBuf3);
+	ret = binaryToDecimal(binaryBuf3);
+	printf("25*2 is %zu\n", ret);
+
+	// MULTIPLICATION (MMM)
 	stringToBinary("5", binaryBuf1);
 	stringToBinary("1024", binaryBuf2);
 	stringToBinary("15", binaryBuf3);
@@ -190,10 +219,9 @@ int main(void) {
 	printArr(binaryBuf1);
 
 
-
 	// BINARY TO DECIMAL
 	stringToBinary("55", binaryBuf1);
-	size_t ret = binaryToDecimal(binaryBuf1);
+	ret = binaryToDecimal(binaryBuf1);
 	printf("55 is %zu\n", ret);
 
 	stringToBinary("1055", binaryBuf1);
