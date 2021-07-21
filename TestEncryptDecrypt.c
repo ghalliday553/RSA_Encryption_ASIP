@@ -11,9 +11,9 @@ typedef struct {
 } test;
 
 int main(void) {
-	char mod[] = "16157591";
+	char mod[] = "59989";
 	
-	test testArr[] = {{"7829", "1745117", "500", "5840670"}};
+	test testArr[] = {{"4861", "15741", "500", "59196"}};
 
 	for(int i = 0; i < sizeof(testArr)/sizeof(testArr[0]); ++i) {
 		unsigned char plainTextBuf[ARITHMETIC_BINARY_BUFF_LEN] = {0};
@@ -41,8 +41,6 @@ int main(void) {
 		printf("DECRYPTED: ");
 		printArr(outputBuf);
 		assert(lessThanEqual(outputBuf, plainTextBuf) == 0);
-
-		printf("inside\n");
 	}
 
 	printf("ALL TESTS PASSED\n");

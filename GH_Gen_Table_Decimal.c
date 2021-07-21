@@ -1,6 +1,6 @@
 #include "128_Bit_Arithmetic.h"
 
-size_t mod = 16157591;
+size_t mod = 59989;
 
 int main(void) {
 	FILE *fptr = fopen("./topDecimal.bin","w+");

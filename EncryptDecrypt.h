@@ -92,12 +92,14 @@ void encrypt_decrypt(const unsigned char *num, const unsigned char *exp, const u
 					fseek(fptr, offset, SEEK_CUR);
 				}
 			}
+			
 
 			/*
 			 * The value being stored at index n is the square of index n.
 			 * Update square with the next square.
-			 */
-			fread(square+ARITHMETIC_BINARY_STORE_LEN, ARITHMETIC_BINARY_STORE_LEN, 1, fptr);
+			 */ 
+			fread(square+ARITHMETIC_BINARY_STORE_LEN+(ARITHMETIC_BINARY_BUFF_LEN%ARITHMETIC_BINARY_STORE_LEN), 
+				ARITHMETIC_BINARY_STORE_LEN, 1, fptr);
 
 			bitMask <<= 1;
 			++bitCounter;

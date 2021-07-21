@@ -3,10 +3,11 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 
 #define ARITHMETIC_STRING_BUFF_LEN 200
-#define ARITHMETIC_BINARY_BUFF_LEN 8
-#define ARITHMETIC_BINARY_STORE_LEN ARITHMETIC_BINARY_BUFF_LEN/2
+#define ARITHMETIC_BINARY_BUFF_LEN 5
+#define ARITHMETIC_BINARY_STORE_LEN (ARITHMETIC_BINARY_BUFF_LEN/2)
 
 void printArr(const unsigned char* ptr) {
 	for (int i = 0; i<ARITHMETIC_BINARY_BUFF_LEN; i++) {
@@ -524,21 +525,21 @@ bool montgomeryMultiplicationHelper(const unsigned char *operand1, const unsigne
  *
  * Note: Behavior is undefined if val is greater than SIZE_MAX
  */
-size_t binaryToDecimal(const unsigned char *val) {
+uint32_t binaryToDecimal(const unsigned char *val) {
 
 	unsigned char temp[ARITHMETIC_BINARY_BUFF_LEN] = {0};
 	memcpy(temp, val, ARITHMETIC_BINARY_BUFF_LEN);
 
-	size_t byteInd = 0;
+	uint32_t byteInd = 0;
 	unsigned char c;
 
-	while(byteInd < ARITHMETIC_BINARY_BUFF_LEN) {
+	while(byteInd < (ARITHMETIC_BINARY_BUFF_LEN+(ARITHMETIC_BINARY_BUFF_LEN%ARITHMETIC_BINARY_STORE_LEN))/2) {
 		temp[ARITHMETIC_BINARY_BUFF_LEN - (byteInd+1)] = val[byteInd];
 		temp[byteInd] = val[ARITHMETIC_BINARY_BUFF_LEN - (byteInd+1)];
 		++byteInd;
 	}
 
-	return *(size_t*)(temp+ARITHMETIC_BINARY_BUFF_LEN-(sizeof(size_t)));
+	return *(size_t*)(temp);
 }
 
 
