@@ -534,12 +534,11 @@ uint32_t binaryToDecimal(const unsigned char *val) {
 	size_t byteInd = 0;
 	unsigned char c;
 
-	while(byteInd < (ARITHMETIC_BINARY_BUFF_LEN+(ARITHMETIC_BINARY_BUFF_LEN%ARITHMETIC_BINARY_STORE_LEN))/2) {
+	while(byteInd <= (ARITHMETIC_BINARY_BUFF_LEN+(ARITHMETIC_BINARY_BUFF_LEN%ARITHMETIC_BINARY_STORE_LEN))/2) {
 		temp[ARITHMETIC_BINARY_BUFF_LEN - (byteInd+1)] = val[byteInd];
 		temp[byteInd] = val[ARITHMETIC_BINARY_BUFF_LEN - (byteInd+1)];
 		++byteInd;
 	}
-	
 	return *(uint32_t*)(temp);
 }
 

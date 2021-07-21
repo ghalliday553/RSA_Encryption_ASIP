@@ -27,7 +27,7 @@ void encrypt_decrypt(const unsigned char *num, const unsigned char *exp, const u
 
 	// Initialize buffer to max size_t value
 	char maxSize[30] = {0};
-	snprintf(maxSize, 30, "%zu", SIZE_MAX);
+	snprintf(maxSize, 30, "%u", UINT32_MAX);
 	unsigned char max[ARITHMETIC_BINARY_BUFF_LEN] = {0};
 	stringToBinary(maxSize, max);
 
@@ -68,8 +68,8 @@ void encrypt_decrypt(const unsigned char *num, const unsigned char *exp, const u
 			formatOffset(square, halfMod);
 
 			/*
-			 *	If file offset is greater than SIZE_MAX, loop until 
-			 *	remaining offset is uneer SIZE_MAX
+			 *	If file offset is greater than UINT32_MAX, loop until 
+			 *	remaining offset is uneer UINT32_MAX
 			 */
 			fseek(fptr, 0, SEEK_SET);
 			while(lessThanEqual(max, square) >= 0){
@@ -84,9 +84,8 @@ void encrypt_decrypt(const unsigned char *num, const unsigned char *exp, const u
 			 * Convert the lookup table byte offset into a decimal size_t and 
 			 * increment the file pointer accordingly.
 			 */
-			size_t offset = binaryToDecimal(square);		
-	
-			if(offset < SIZE_MAX/ARITHMETIC_BINARY_BUFF_LEN) {
+			size_t offset = binaryToDecimal(square);
+			if(offset < UINT32_MAX/ARITHMETIC_BINARY_BUFF_LEN) {
 				fseek(fptr, offset*ARITHMETIC_BINARY_STORE_LEN, SEEK_CUR);
 			} else {
 				for (int i = 0; i < ARITHMETIC_BINARY_STORE_LEN; i++) {
