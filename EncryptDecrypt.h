@@ -84,7 +84,8 @@ void encrypt_decrypt(const unsigned char *num, const unsigned char *exp, const u
 			 * Convert the lookup table byte offset into a decimal size_t and 
 			 * increment the file pointer accordingly.
 			 */
-			size_t offset = binaryToDecimal(square);
+			size_t offset = binaryToDecimal(square);		
+	
 			if(offset < SIZE_MAX/ARITHMETIC_BINARY_BUFF_LEN) {
 				fseek(fptr, offset*ARITHMETIC_BINARY_STORE_LEN, SEEK_CUR);
 			} else {

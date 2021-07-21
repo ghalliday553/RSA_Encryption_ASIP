@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <inttypes.h>
 
 #define ARITHMETIC_STRING_BUFF_LEN 200
 #define ARITHMETIC_BINARY_BUFF_LEN 5
@@ -527,10 +528,10 @@ bool montgomeryMultiplicationHelper(const unsigned char *operand1, const unsigne
  */
 uint32_t binaryToDecimal(const unsigned char *val) {
 
-	unsigned char temp[ARITHMETIC_BINARY_BUFF_LEN] = {0};
+	unsigned char temp[ARITHMETIC_BINARY_BUFF_LEN] __attribute__((aligned(4))) = {0};
 	memcpy(temp, val, ARITHMETIC_BINARY_BUFF_LEN);
 
-	uint32_t byteInd = 0;
+	size_t byteInd = 0;
 	unsigned char c;
 
 	while(byteInd < (ARITHMETIC_BINARY_BUFF_LEN+(ARITHMETIC_BINARY_BUFF_LEN%ARITHMETIC_BINARY_STORE_LEN))/2) {
@@ -538,9 +539,7 @@ uint32_t binaryToDecimal(const unsigned char *val) {
 		temp[byteInd] = val[ARITHMETIC_BINARY_BUFF_LEN - (byteInd+1)];
 		++byteInd;
 	}
-
-	return *(size_t*)(temp);
+	
+	return *(uint32_t*)(temp);
 }
-
-
 
