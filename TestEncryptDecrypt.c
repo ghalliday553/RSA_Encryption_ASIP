@@ -11,11 +11,22 @@ typedef struct {
 } test;
 
 int main(void) {
-	char mod[] = "59989";
+	char mod[] = "59989"; //P = 239, Q = 251
 	
-	test testArr[] = {{"4861", "15741", "500", "59196"}};
-
-	for(int i = 0; i < sizeof(testArr)/sizeof(testArr[0]); ++i) {
+	test testArr[] = {
+			{"4861", "15741", "500", "59196"}, //1
+			{"691", "2411", "6789", "20190"}, //2
+			{"43", "24907", "3457", "46052"}, //3
+			{"11", "113591", "25482", "52220"}, //4
+			{"151", "9851", "9785", "26100"}, //5
+			{"859", "1039", "12634", "57198"}, //6
+			{"1081", "1321", "9632", "49821"}, //7
+			{"219", "7879", "12599", "15771"}, //8
+			{"467", "2803", "56924", "31757"}, //9
+			{"11", "54091", "894", "37159"} //10 
+		};
+	register int i;
+	for(i ^= i; i < sizeof(testArr)/sizeof(testArr[0]); ++i) {
 		unsigned char plainTextBuf[ARITHMETIC_BINARY_BUFF_LEN] = {0};
 		unsigned char cipherTextBuf[ARITHMETIC_BINARY_BUFF_LEN] = {0};
 
