@@ -1,6 +1,6 @@
 #include "128_Bit_Arithmetic.h"
 
-char mod[ARITHMETIC_STRING_BUFF_LEN] = "16157591";
+char mod[ARITHMETIC_STRING_BUFF_LEN] = "59989";
 
 int main(void) {
 	unsigned char valueBuf[ARITHMETIC_BINARY_BUFF_LEN] = {0};
@@ -22,7 +22,7 @@ int main(void) {
 		montgomeryMultiplicationHelper(valueBuf, valueBuf, modBuf, resultBuf);
 
 		// Write the result to file
-		fwrite(resultBuf+ARITHMETIC_BINARY_STORE_LEN, sizeof(unsigned char), ARITHMETIC_BINARY_STORE_LEN, fptr);
+		fwrite(resultBuf+ARITHMETIC_BINARY_STORE_LEN+(ARITHMETIC_BINARY_BUFF_LEN%ARITHMETIC_BINARY_STORE_LEN), sizeof(unsigned char), ARITHMETIC_BINARY_STORE_LEN, fptr);
 
 		// Increment index
 		addition(valueBuf, oneBuf, resultBuf);

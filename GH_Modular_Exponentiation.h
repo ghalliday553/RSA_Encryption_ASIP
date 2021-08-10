@@ -18,8 +18,9 @@ void mod_encrypt_decrypt(const unsigned char *num, const unsigned char *exp, con
     unsigned char p1[ARITHMETIC_BINARY_BUFF_LEN] = {0};
 
     size_t expBits = ARITHMETIC_BINARY_BUFF_LEN*8 - bitOffset(exp);
+
     size_t byteInd = ARITHMETIC_BINARY_BUFF_LEN - 1;
-    bool carry = false;
+
     unsigned short bitMask = 1;
     size_t bitCounter = 0;
 
@@ -27,7 +28,6 @@ void mod_encrypt_decrypt(const unsigned char *num, const unsigned char *exp, con
     while (1) {
         // Loop through each byte
         while (bitMask <= 128) {
-            printf("bitCounter is %zu\n", bitCounter);
             /*
              * Exit if all non-0 exp bits have been used 
              */
@@ -36,6 +36,7 @@ void mod_encrypt_decrypt(const unsigned char *num, const unsigned char *exp, con
             }
 
             montgomeryMultiplicationHelper(p0, p0, mod, p1);
+
             if (exp[byteInd] & bitMask) {
                 montgomeryMultiplicationHelper(z0, p0, mod, z1);
             } else {
@@ -48,6 +49,8 @@ void mod_encrypt_decrypt(const unsigned char *num, const unsigned char *exp, con
 
             bitMask <<= 1;
             ++bitCounter;
+
+            printf("bitCounter is %lu\n", bitCounter);
         }
 
         bitMask = 1;
