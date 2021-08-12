@@ -338,7 +338,7 @@ static inline bool shiftLeft(unsigned char *operand1)
 		operand1[byteInd] |= (operand1[byteInd + 1] >> 7);
 
 		//propsed hardware solution
-		// operand1[byteInd] = my_shiftRight_func(operand1[byteInd]);
+		// operand1[byteInd] = my_shiftRight_func(operand1[byteInd], operand1[byteInd + 1]);
 		// __asm__ __volatile__(
 		//  	 "my_shiftLeft_func	\t%1, %2, %0\n"
 		//  		:"=r" (operand1[byteInd])
