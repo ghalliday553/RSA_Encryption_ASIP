@@ -1,13 +1,11 @@
-#include "GH_Modular_Exponentiation.h"
+#include "ModularExpEncryptDecrypt.h"
 #include <assert.h>
 
-#define charBufferLen 200
-
 typedef struct {
-	char e[charBufferLen];
-	char d[charBufferLen];
-	char plainText[charBufferLen];
-	char cipherText[charBufferLen];
+	char e[ARITHMETIC_STRING_BUFF_LEN];
+	char d[ARITHMETIC_STRING_BUFF_LEN];
+	char plainText[ARITHMETIC_STRING_BUFF_LEN];
+	char cipherText[ARITHMETIC_STRING_BUFF_LEN];
 } test;
 
 int main(void) {
@@ -51,7 +49,6 @@ int main(void) {
 	*/
 
 	for(int i = 0; i < sizeof(testArr)/sizeof(testArr[0]); ++i) {
-		printf("INSIDE\n");
 		unsigned char plainTextBuf[ARITHMETIC_BINARY_BUFF_LEN] = {0};
 		unsigned char cipherTextBuf[ARITHMETIC_BINARY_BUFF_LEN] = {0};
 

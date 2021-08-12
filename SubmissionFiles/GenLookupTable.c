@@ -1,5 +1,6 @@
-#include "128_Bit_Arithmetic.h"
+#include "APIntegerLibrary.h"
 
+// 16-bit key
 char mod[ARITHMETIC_STRING_BUFF_LEN] = "59989";
 
 int main(void) {
@@ -11,11 +12,14 @@ int main(void) {
 	unsigned char twoBuf[ARITHMETIC_BINARY_BUFF_LEN] = {0};
 
 	stringToBinary("0", valueBuf);
+
+	// Constants to be frequently used
 	stringToBinary("1", oneBuf);
 	stringToBinary("2", twoBuf);
+
 	stringToBinary(mod, modBuf);
 
-	FILE *fptr = fopen("./top.bin","w+");
+	FILE *fptr = fopen("./LookupTable.bin","w+");
 
 	while (lessThanEqual(counterBuf, modBuf) == 1) {
 		// Calculate the square of the index

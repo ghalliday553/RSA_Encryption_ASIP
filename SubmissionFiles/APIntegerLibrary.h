@@ -6,28 +6,47 @@
 #include <stdint.h>
 #include <inttypes.h>
 
-#define ARITHMETIC_STRING_BUFF_LEN 200
+// Largest input decimal string
+#define ARITHMETIC_STRING_BUFF_LEN 25
+
+/*
+ * Set ARITHMETIC_BINARY_BUFF_LEN to (largest number needed(in bits)/8) * 2 + 1
+ *
+ * Currently set to handle a maximum of 16-bit numbers
+ */
 #define ARITHMETIC_BINARY_BUFF_LEN 5
+
 #define ARITHMETIC_BINARY_STORE_LEN (ARITHMETIC_BINARY_BUFF_LEN / 2)
 
-static inline void printArr(const unsigned char *ptr)
-{
+/*
+ * Print the bytes of an AP integer
+ */
+static inline void printArr(const unsigned char *ptr) {
 	register int i;
 	for (i^=i; i < ARITHMETIC_BINARY_BUFF_LEN; i++)
 	{
 		printf("%02x", ptr[i]);
-		//printf("%02x", ptr[i+1]);
 	}
 	printf("\n");
 }
 
+
 /*
  * Helper function for stringToBits()
+ * Divides a decimal string by 2
+ *
+ * Input: buf
+ * 	- buffer containing a decimal string
+ * 
+ * Ouput: buf
+ * 	- output string written in-place
+ * 
  */
-static inline void divStringByTwo(char *buf)
-{
+static inline void divStringByTwo(char *buf) {
 	register int add = 0;
 	char *it;
+
+	// Perform division
 	for (it = buf; *it != '\0'; ++it)
 	{
 		int digit = *it - '0';
@@ -49,6 +68,7 @@ static inline void divStringByTwo(char *buf)
 		*it = digit + '0';
 	}
 
+	// Remove padded 0s
 	int zeroOffset = 0;
 	for (it = buf; *it == '0'; ++it)
 	{
@@ -57,29 +77,29 @@ static inline void divStringByTwo(char *buf)
 	memmove(buf, buf + zeroOffset, strlen(buf) - zeroOffset + 1);
 }
 
+
 /*
- * Converts a string of decimal numbers to both its binary string and binary equivalents
+ * Converts a string of decimal numbers to its binary equivalent
  *
  * Input: inputBuf
  *	- Input string consisting of a decimal number of arbitrary size
  *
- * Output: stringOutputBuf, binaryOutputBuf
- *	- Output buffers where the equivalent binary string and binary representations are written
+ * Output: outputBuf
+ *	- Output buffer where the equivalent binary representations is written
  *
- * Note: stringOutputBuf and binaryOutputBuf must be large enough to hold the largest needed numbers.
- * 		 Their sizes must be defined using ARITHMETIC_STRING_BUFF_LEN and ARITHMETIC_BINARY_BUFF_LEN.
+ * Note: outputBuf must be large enough to hold the largest needed numbers.
+ * 		 Its size can be defined using the ARITHMETIC_BINARY_BUFF_LEN macro.
  */
-static inline bool stringToBinary(const char *inputBuf, unsigned char *outputBuf)
-{
+static inline bool stringToBinary(const char *inputBuf, unsigned char *outputBuf) {
 	memset(outputBuf, 0, ARITHMETIC_BINARY_BUFF_LEN);
 
 	char stringTempBuf[ARITHMETIC_STRING_BUFF_LEN] = {0};
-
 	register size_t byteInd = ARITHMETIC_BINARY_BUFF_LEN - 1;
 	register unsigned int bitMask = 1;
 
 	strcpy(stringTempBuf, inputBuf);
 
+	// While decimal string is greater than 0
 	while (strlen(stringTempBuf))
 	{
 		switch (stringTempBuf[strlen(stringTempBuf) - 1])
@@ -107,6 +127,7 @@ static inline bool stringToBinary(const char *inputBuf, unsigned char *outputBuf
 	return true;
 }
 
+
 /*
  * Computes the sum of two binary numbers
  *
@@ -118,8 +139,7 @@ static inline bool stringToBinary(const char *inputBuf, unsigned char *outputBuf
  *
  * Note: outputBuf must be large enough to hold the largest needed sum. This size must defined by ARITHMETIC_BINARY_BUFF_LEN.
  */
-static inline bool addition(const unsigned char *operand1, const unsigned char *operand2, unsigned char *outputBuf)
-{
+static inline bool addition(const unsigned char *operand1, const unsigned char *operand2, unsigned char *outputBuf) {
 
 	memset(outputBuf, 0, ARITHMETIC_BINARY_BUFF_LEN);
 
@@ -127,22 +147,27 @@ static inline bool addition(const unsigned char *operand1, const unsigned char *
 	register bool carry = false;
 	register unsigned int binaryBitMask = 1;
 
-	while (byteInd >= 1)
-	{
+	while (byteInd >= 1) {
+		// Handle case of FF + FF with previous carry (two wraparounds)
 		if (operand1[byteInd] == 0xFF && operand2[byteInd] == 0xFF && outputBuf[byteInd] == 1)
 		{
 			outputBuf[byteInd - 1] += 1;
 		}
+
 		outputBuf[byteInd] += operand1[byteInd] + operand2[byteInd];
+		// Test for wraparound
 		if (outputBuf[byteInd] < operand1[byteInd] || outputBuf[byteInd] < operand2[byteInd])
 		{
 			outputBuf[byteInd - 1] += 1;
 		}
+
 		--byteInd;
 	}
 	outputBuf[0] = operand1[0] + operand2[0];
+
 	return true;
 }
+
 
 /*
  * Subtracts one binary number from another
@@ -156,33 +181,26 @@ static inline bool addition(const unsigned char *operand1, const unsigned char *
  *
  * Note: outputBuf must be large enough to hold the largest needed sum. This size must defined by ARITHMETIC_BINARY_BUFF_LEN.
  */
-static inline bool subtraction(const unsigned char *operand1, const unsigned char *operand2, unsigned char *outputBuf)
-{
+static inline bool subtraction(const unsigned char *operand1, const unsigned char *operand2, unsigned char *outputBuf) {
 	memset(outputBuf, 0, ARITHMETIC_BINARY_BUFF_LEN);
 
 	register size_t byteInd = ARITHMETIC_BINARY_BUFF_LEN - 1;
 	register bool borrow = false;
 	register unsigned int binaryBitMask = 1;
 
-	while (!(byteInd == 0))
-	{
-		if (binaryBitMask > 128)
-		{ 
+	while (!(byteInd == 0)) {
+		if (binaryBitMask > 128) { 
 			binaryBitMask = 1;
 			--byteInd;
 		}
 
-		if ((binaryBitMask & operand1[byteInd]) >= 1 && (binaryBitMask & operand2[byteInd]) >= 1)
-		{
-			if (borrow)
-			{
+		if ((binaryBitMask & operand1[byteInd]) >= 1 && (binaryBitMask & operand2[byteInd]) >= 1) {
+			if (borrow) {
 				outputBuf[byteInd] |= binaryBitMask;
 			}
 		}
-		else if ((binaryBitMask & operand1[byteInd]) >= 1 && (binaryBitMask & operand2[byteInd]) == 0)
-		{
-			if (borrow)
-			{
+		else if ((binaryBitMask & operand1[byteInd]) >= 1 && (binaryBitMask & operand2[byteInd]) == 0) {
+			if (borrow) {
 				borrow = false;
 			}
 			else
@@ -190,26 +208,23 @@ static inline bool subtraction(const unsigned char *operand1, const unsigned cha
 				outputBuf[byteInd] |= binaryBitMask;
 			}
 		}
-		else if ((binaryBitMask & operand1[byteInd]) == 0 && (binaryBitMask & operand2[byteInd]) >= 1)
-		{
-			if (!borrow)
-			{
+		else if ((binaryBitMask & operand1[byteInd]) == 0 && (binaryBitMask & operand2[byteInd]) >= 1) {
+			if (!borrow) {
 				outputBuf[byteInd] |= binaryBitMask;
 			}
 			borrow = true;
 		}
-		else
-		{
-			if (borrow)
-			{
+		else {
+			if (borrow) {
 				outputBuf[byteInd] |= binaryBitMask;
 			}
 		}
 		binaryBitMask <<= 1;
 
-	} //end of while (1)
+	}
 	return true;
 }
+
 
 /*
  * Computes operand 1 is less than or equal to operand 2.
@@ -221,26 +236,21 @@ static inline bool subtraction(const unsigned char *operand1, const unsigned cha
  * 	- -1 if operand1 > operand2
  * 	- 0 if operand1 == operand2
  */
-static inline int lessThanEqual(const unsigned char *operand1, const unsigned char *operand2)
-{
+static inline int lessThanEqual(const unsigned char *operand1, const unsigned char *operand2) {
 	register unsigned int bitMask = 128;
 	register size_t byteInd = 0;
 
-	while (byteInd < ARITHMETIC_BINARY_BUFF_LEN)
-	{
+	while (byteInd < ARITHMETIC_BINARY_BUFF_LEN) {
 
-		if (bitMask < 1)
-		{ //force in line check
+		if (bitMask < 1) {
 			bitMask = 128;
 			++byteInd;
 		}
 
-		if ((operand1[byteInd] & bitMask) && !(operand2[byteInd] & bitMask))
-		{
+		if ((operand1[byteInd] & bitMask) && !(operand2[byteInd] & bitMask)) {
 			return -1;
 		}
-		else if ((operand2[byteInd] & bitMask) && !(operand1[byteInd] & bitMask))
-		{
+		else if ((operand2[byteInd] & bitMask) && !(operand1[byteInd] & bitMask)) {
 			return 1;
 		}
 		bitMask >>= 1;
@@ -248,19 +258,18 @@ static inline int lessThanEqual(const unsigned char *operand1, const unsigned ch
 	return 0;
 }
 
+
 /*
  * Shifts the binary number right by 1 in place
  *
  * Input/Output: operand1
  */
-static inline bool shiftRight(unsigned char *operand1)
-{
+static inline bool shiftRight(unsigned char *operand1) {
 	register size_t byteInd = 0;
 	register unsigned char newTemp = 0;
 	register unsigned char prevTemp = 0;
 
-	while (byteInd < ARITHMETIC_BINARY_BUFF_LEN)
-	{
+	while (byteInd < ARITHMETIC_BINARY_BUFF_LEN) {
 		prevTemp = newTemp;
 		newTemp = (operand1[byteInd] & 1);
 
@@ -281,6 +290,7 @@ static inline bool shiftRight(unsigned char *operand1)
 	return true;
 }
 
+
 /*
  * Computes the number of bits before the first non-zero bit
  *
@@ -289,25 +299,19 @@ static inline bool shiftRight(unsigned char *operand1)
  * Output: return value
  *	- number of bits
  */
-static inline size_t bitOffset(const unsigned char *operand1)
-{
+static inline size_t bitOffset(const unsigned char *operand1) {
 	register size_t byteInd = 0;
 	register unsigned int bitMask = 128;
 
 	register size_t bitOffset = 0;
-	while (!(byteInd == ARITHMETIC_BINARY_BUFF_LEN))
-	{
+	while (!(byteInd == ARITHMETIC_BINARY_BUFF_LEN)) {
 
-		if (operand1[byteInd] != 0x0)
-		{
+		if (operand1[byteInd] != 0x0) {
+			while (bitMask >= 1) {
 
-			while (bitMask >= 1)
-			{
-
-				if ((bitMask & operand1[byteInd]) != 0x0)
-				{
+				if ((bitMask & operand1[byteInd]) != 0x0) {
 					return bitOffset;
-				} //end of if
+				}
 
 				bitMask >>= 1;
 				++bitOffset;
@@ -316,23 +320,23 @@ static inline size_t bitOffset(const unsigned char *operand1)
 
 			bitMask = 128;
 		} //end of if
+
 		bitOffset += 8;
 		++byteInd;
-	} // end of whilw
+	} // end of while
 
 	return ARITHMETIC_BINARY_BUFF_LEN * 8;
 }
+
 
 /*
  * Shifts the binary number left by 1 in place
  *
  * Input/Output: operand1
  */
-static inline bool shiftLeft(unsigned char *operand1)
-{
+static inline bool shiftLeft(unsigned char *operand1) {
 	register size_t byteInd = bitOffset(operand1) / 8 - 1;
-	while (byteInd < ARITHMETIC_BINARY_BUFF_LEN - 1)
-	{
+	while (byteInd < ARITHMETIC_BINARY_BUFF_LEN - 1) {
 		//lines for Hardware 
 		operand1[byteInd] <<= 1;
 		operand1[byteInd] |= (operand1[byteInd + 1] >> 7);
@@ -352,6 +356,7 @@ static inline bool shiftLeft(unsigned char *operand1)
 	return true;
 }
 
+
 /*
  * Computes the multiplication of operand1 and operand2
  *
@@ -361,8 +366,7 @@ static inline bool shiftLeft(unsigned char *operand1)
  *
  * Note: outputBuf must be large enough to hold the largest needed sum. This size must defined by ARITHMETIC_BINARY_BUFF_LEN.
  */
-static inline void multiplication(const unsigned char *operand1, const unsigned char *operand2, unsigned char *outputBuf)
-{
+static inline void multiplication(const unsigned char *operand1, const unsigned char *operand2, unsigned char *outputBuf) {
 	memset(outputBuf, 0, ARITHMETIC_BINARY_BUFF_LEN);
 
 	unsigned char temp1[ARITHMETIC_BINARY_BUFF_LEN] = {0};
@@ -372,29 +376,31 @@ static inline void multiplication(const unsigned char *operand1, const unsigned 
 	register unsigned short bitMask = 1;
 	register int bitOffset = 0;
 
-	while (!(byteInd == 0))
-	{
-
-		if (bitMask > 128)
-		{
+	while (!(byteInd == 0)) {
+		if (bitMask > 128) {
 			bitMask = 1;
 			--byteInd;
 		}
-		if (operand2[byteInd] & bitMask)
-		{
+
+		// Test if operand2 bit is a 1
+		if (operand2[byteInd] & bitMask) {
 			memcpy(temp1, operand1, ARITHMETIC_BINARY_BUFF_LEN);
+
 			register size_t i;
-			for (i ^= i; i < bitOffset; ++i)
-			{
+			for (i ^= i; i < bitOffset; ++i) {
 				shiftLeft(temp1);
 			}
+
+			// Add result to running sum
 			addition(outputBuf, temp1, temp2);
 			memcpy(outputBuf, temp2, ARITHMETIC_BINARY_BUFF_LEN);
 		}
+
 		++bitOffset;
 		bitMask <<= 1;
-	}//end of whiel loop
+	}
 }
+
 
 /*
  * Computes the division of operand1 by operand2
@@ -405,8 +411,7 @@ static inline void multiplication(const unsigned char *operand1, const unsigned 
  *
  * Note: outputBuf must be large enough to hold the largest needed sum. This size must defined by ARITHMETIC_BINARY_BUFF_LEN.
  */
-static inline void division(const unsigned char *operand1, const unsigned char *operand2, unsigned char *outputBuf)
-{
+static inline void division(const unsigned char *operand1, const unsigned char *operand2, unsigned char *outputBuf) {
 	memset(outputBuf, 0, ARITHMETIC_BINARY_BUFF_LEN);
 
 	unsigned char operand1Temp[ARITHMETIC_BINARY_BUFF_LEN] = {0};
@@ -418,56 +423,54 @@ static inline void division(const unsigned char *operand1, const unsigned char *
 	register size_t byteInd = 0;
 	register unsigned short bitInd = 0;
 	register unsigned short bitMask = 128;
-
 	register size_t shiftAmount = 0;
 
-	// Perform division
-	while (byteInd < ARITHMETIC_BINARY_BUFF_LEN)
-	{
-		while (bitMask > 0)
-		{
+	while (byteInd < ARITHMETIC_BINARY_BUFF_LEN) {
 
+		// Push bits of operand1 right
+		while (bitMask > 0) {
 			memcpy(temp, operand1Temp, ARITHMETIC_BINARY_BUFF_LEN);
-			shiftAmount = 8 * ARITHMETIC_BINARY_BUFF_LEN - 8 * byteInd - bitInd - 1;
+			shiftAmount = (8 * ARITHMETIC_BINARY_BUFF_LEN) - (8 * byteInd) - bitInd - 1;
 			register size_t i;
-			for (i ^= i; i < shiftAmount; ++i)
-			{
+			for (i ^= i; i < shiftAmount; ++i) {
 				shiftRight(temp);
 			}
 
-			if (lessThanEqual(operand2, temp) >= 0)
-			{
+			// Test if reduced operand1 is less than operand2
+			if (lessThanEqual(operand2, temp) >= 0) {
 				break;
 			}
 
+			// Decrement the number of pushed bits
 			bitMask >>= 1;
 			++bitInd;
+		}
 
-		} //end of while bitMask > 0
-
-		if (lessThanEqual(operand2, temp) >= 0)
-		{
+		// If reduced operand1 is less than operand2
+		if (lessThanEqual(operand2, temp) >= 0) {
+			// Set outputBuf bit
 			outputBuf[byteInd] |= (bitMask);
 
+			// Set temp buffer to account for the current outputBuf offset
 			memcpy(temp, operand2, ARITHMETIC_BINARY_BUFF_LEN);
 			register size_t i;
-			for (i ^= i; i < shiftAmount; ++i)
-			{
+			for (i ^= i; i < shiftAmount; ++i) {
 				shiftLeft(temp);
 			}
 
+			// Update operand1
 			subtraction(operand1Temp, temp, resultTemp);
 			memcpy(operand1Temp, resultTemp, ARITHMETIC_BINARY_BUFF_LEN);
 		}
 
-		if (bitMask == 0)
-		{
+		if (bitMask == 0) {
 			++byteInd;
 			bitMask = 128;
 			bitInd = 0;
 		}
-	} //end of while byteInd < ARITHMETIC_BINARY_BUFF_LEN
-} //end of funct
+	}
+}
+
 
 /*
  * Computes the decimal equivalent of the value stored within the buffer
@@ -476,8 +479,7 @@ static inline void division(const unsigned char *operand1, const unsigned char *
  *
  * Note: Behavior is undefined if val is greater than SIZE_MAX
  */
-static inline uint32_t binaryToDecimal(const unsigned char *val)
-{
+static inline uint32_t binaryToDecimal(const unsigned char *val) {
 
 	unsigned char temp[ARITHMETIC_BINARY_BUFF_LEN] __attribute__((aligned(4))) = {0};
 	memcpy(temp, val, ARITHMETIC_BINARY_BUFF_LEN);
@@ -485,17 +487,14 @@ static inline uint32_t binaryToDecimal(const unsigned char *val)
 	register size_t byteInd = 0;
 	unsigned char c;
 
-	while (byteInd <= (ARITHMETIC_BINARY_BUFF_LEN + (ARITHMETIC_BINARY_BUFF_LEN % ARITHMETIC_BINARY_STORE_LEN)) / 2)
-	{
+	// Perform little-endian to big-endian conversion
+	while (byteInd <= (ARITHMETIC_BINARY_BUFF_LEN + (ARITHMETIC_BINARY_BUFF_LEN % ARITHMETIC_BINARY_STORE_LEN)) / 2) {
 		temp[ARITHMETIC_BINARY_BUFF_LEN - (byteInd + 1)] = val[byteInd];
 		temp[byteInd] = val[ARITHMETIC_BINARY_BUFF_LEN - (byteInd + 1)];
 		++byteInd;
 	}
 	return *(uint32_t *)(temp);
 }
-
-
-
 
 
 /*

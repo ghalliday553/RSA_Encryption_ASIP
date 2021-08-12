@@ -1,4 +1,4 @@
-#include "128_Bit_Arithmetic.h"
+#include "APIntegerLibrary.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -11,9 +11,10 @@ void encrypt_decrypt(const unsigned char *num, const unsigned char *exp, const u
 	memcpy(halfMod, mod, ARITHMETIC_BINARY_BUFF_LEN);
 	shiftRight(halfMod);
 
-	FILE *fptr = fopen("./topDecimal.bin", "r");
+	// Open lookup table file
+	FILE *fptr = fopen("./LookupTable.bin", "r");
 
-	// Initialize buffer to max size_t value
+	// Initialize buffer to max value
 	char maxSize[30] = {0};
 	snprintf(maxSize, 30, "%u", UINT32_MAX);
 	unsigned char max[ARITHMETIC_BINARY_BUFF_LEN] = {0};
@@ -36,16 +37,14 @@ void encrypt_decrypt(const unsigned char *num, const unsigned char *exp, const u
 	while ((!((bitCounter == expBits) || (byteInd == 0))))
 	{
 		// Loop through each byte
-		if (bitMask > 128)
-		{
+		if (bitMask > 128) {
 			bitMask = 1;
 			--byteInd;
 		}
 		/*
-			 *	If exponent bit is a 1, multiply running product with the next square 
-			 */
-		if (exp[byteInd] & bitMask)
-		{
+		 *	If exponent bit is a 1, multiply running product with the next square 
+		 */
+		if (exp[byteInd] & bitMask) {
 			unsigned char mult[ARITHMETIC_BINARY_BUFF_LEN] = {0};
 			multiplication(square, product, mult);
 
@@ -61,8 +60,7 @@ void encrypt_decrypt(const unsigned char *num, const unsigned char *exp, const u
 		}
 
 		//instead of an extra branch to function
-		if (lessThanEqual(square, halfMod) <= 0)
-		{
+		if (lessThanEqual(square, halfMod) <= 0) {
 			unsigned char distanceFromCenterBuf[ARITHMETIC_BINARY_BUFF_LEN] = {0};
 			unsigned char oneBuff[ARITHMETIC_BINARY_BUFF_LEN] = {0};
 			unsigned char tempBuff[ARITHMETIC_BINARY_BUFF_LEN] = {0};
@@ -74,13 +72,11 @@ void encrypt_decrypt(const unsigned char *num, const unsigned char *exp, const u
 		}
 
 		/*
-			 *	If file offset is greater than UINT32_MAX, loop until 
-			 *	remaining offset is uneer UINT32_MAX
-			 */
-
+		 *	If file offset is greater than UINT32_MAX, loop until 
+		 *	remaining offset is uneer UINT32_MAX
+		 */
 		fseek(fptr, 0, SEEK_SET);
-		while (lessThanEqual(max, square) >= 0)
-		{
+		while (lessThanEqual(max, square) >= 0) {
 			subtraction(square, max, product);
 			memcpy(square, product, ARITHMETIC_BINARY_BUFF_LEN);
 			register int i;
@@ -91,28 +87,25 @@ void encrypt_decrypt(const unsigned char *num, const unsigned char *exp, const u
 		}
 
 		/*
-			 * Convert the lookup table byte offset into a decimal size_t and 
-			 * increment the file pointer accordingly.
-			 */
-
+		 * Convert the lookup table byte offset into a decimal size_t and 
+		 * increment the file pointer accordingly.
+		 */
 		register size_t offset = binaryToDecimal(square);
-
-		if (offset < UINT32_MAX / ARITHMETIC_BINARY_BUFF_LEN)
-		{
+		if (offset < UINT32_MAX / ARITHMETIC_BINARY_BUFF_LEN) {
 			fseek(fptr, offset * ARITHMETIC_BINARY_STORE_LEN, SEEK_CUR);
 		}
 
 		/*
-			 * The value being stored at index n is the square of index n.
-			 * Update square with the next square.
-			 */
+		 * The value being stored at index n is the square of index n.
+		 * Update square with the next square.
+		 */
 		fread(square + ARITHMETIC_BINARY_STORE_LEN + (ARITHMETIC_BINARY_BUFF_LEN % ARITHMETIC_BINARY_STORE_LEN),
 			  ARITHMETIC_BINARY_STORE_LEN, 1, fptr);
 
 		bitMask <<= 1;
 		++bitCounter;
 
-	} //end of while change to for
+	}
 
 	fclose(fptr);
 }

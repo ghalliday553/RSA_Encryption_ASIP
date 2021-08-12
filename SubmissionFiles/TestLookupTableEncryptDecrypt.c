@@ -1,13 +1,11 @@
-#include "EncryptDecrypt.h"
+#include "LookupTableEncryptDecrypt.h"
 #include <assert.h>
 
-#define charBufferLen 25
-
 typedef struct {
-	char e[charBufferLen];
-	char d[charBufferLen];
-	char plainText[charBufferLen];
-	char cipherText[charBufferLen];
+	char e[ARITHMETIC_STRING_BUFF_LEN];
+	char d[ARITHMETIC_STRING_BUFF_LEN];
+	char plainText[ARITHMETIC_STRING_BUFF_LEN];
+	char cipherText[ARITHMETIC_STRING_BUFF_LEN];
 } test;
 
 int main(void) {

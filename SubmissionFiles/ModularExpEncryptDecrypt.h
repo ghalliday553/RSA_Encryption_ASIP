@@ -1,4 +1,4 @@
-#include "128_Bit_Arithmetic.h"
+#include "APIntegerLibrary.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -28,9 +28,7 @@ void mod_encrypt_decrypt(const unsigned char *num, const unsigned char *exp, con
     while (1) {
         // Loop through each byte
         while (bitMask <= 128) {
-            /*
-             * Exit if all non-0 exp bits have been used 
-             */
+            // Exit if all non-0 exp bits have been accounted for 
             if (bitCounter == expBits) {
                 break;
             }
@@ -46,11 +44,8 @@ void mod_encrypt_decrypt(const unsigned char *num, const unsigned char *exp, con
             memcpy(p0, p1, ARITHMETIC_BINARY_BUFF_LEN);
             memcpy(z0, z1, ARITHMETIC_BINARY_BUFF_LEN);
 
-
             bitMask <<= 1;
             ++bitCounter;
-
-            printf("bitCounter is %lu\n", bitCounter);
         }
 
         bitMask = 1;
