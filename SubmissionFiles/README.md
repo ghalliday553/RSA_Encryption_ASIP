@@ -26,6 +26,20 @@ Notes:
 - ARITHMETIC_STRING_BUFF_LEN may need to be increased
 - ARITHMETIC_BINARY_BUFF_LEN may need to be increased (size requirements can be found within APIntegeryLibrary.h)
 
+## Command Line Commands 
+- Run Time of Execution: time ./TestEncryptDecrypt.exe
+     - Real: time from start to finish of the call
+     - User: amount of CPU time spent in user mode
+     - Sys: amount of CPU time spent in the kernel within the process   
+- Generate Assembly Code: arm-linux-gcc -S TestEncryptDecrypt.c
+- Compiling C Code: arm-linux-gcc -static -o TestEncryptDecrypt.exe TestEncryptDecrypt.c
+- Compiling C Assembly: arm-linux-gcc -o TestEncryptDecrypt.exe TestEncryptDecrypt.s
+- Profiling: arm-linux-gcc -pg TestEncryptDecrypt.c (upload to arm Machine), ./a.out, (bring gmon.out back to local machine), gprof
+- O3 Flag:
+    - Generate Assembly Code: arm-linux-gcc -S -O3 TestEncryptDecrypt.c
+    - Compiling C Code: arm-linux-gcc -o TestEncryptDecrypt.exe TestEncryptDecrypt.c -O3
+    - Compiling Assembly Code: arm-linux-gcc -o TestEncryptDecrypt.exe TestEncryptDecrypt.s -O3
+
 
 
 
