@@ -2,12 +2,12 @@
 
 ## Lookup Table Generation
 
-Update the "mod buffer with the desired modulus value"
+Update the "mod" buffer with the desired modulus value
 Program output will produce a "LookupTable.bin" file
 
 Notes:
-	- ARITHMETIC_STRING_BUFF_LEN may need to be increased
-	- ARITHMETIC_BINARY_BUFF_LEN may need to be increased (size requirements can be found within APIntegeryLibrary.h)
+- ARITHMETIC_STRING_BUFF_LEN may need to be increased
+- ARITHMETIC_BINARY_BUFF_LEN may need to be increased (size requirements can be found within APIntegeryLibrary.h)
 
 ## Testing Lookup Table Encryption/Decryption
 
@@ -23,8 +23,8 @@ Notes:
 16, 128, and 512 bit RSA keys have been provided and should be commented out as necessary.
 
 Notes:
-	- ARITHMETIC_STRING_BUFF_LEN may need to be increased
-	- ARITHMETIC_BINARY_BUFF_LEN may need to be increased (size requirements can be found within APIntegeryLibrary.h)
+- ARITHMETIC_STRING_BUFF_LEN may need to be increased
+- ARITHMETIC_BINARY_BUFF_LEN may need to be increased (size requirements can be found within APIntegeryLibrary.h)
 
 
 
